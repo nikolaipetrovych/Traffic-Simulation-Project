@@ -30,6 +30,10 @@ road_width = 50
 vert_x = int(xsize/2 - road_width/2)
 hor_y = int(ysize/2 - road_width/2)
 
+#set traffic light colors
+green = (0, 255, 0)
+red = (255, 0, 0)
+
 #set traffic light dims and pos
 light1_size = 10
 light1_offset = 200
@@ -39,17 +43,13 @@ light1_vert_x = int(xsize/2)
 light1_vert_y = int(ysize/2 + light1_offset)
 
 
-#set traffic light colors
-green = (0, 255, 0)
-red = (255, 0, 0)
-
 #set initial traffic light values
 light1_state = False #True for red, False for green
 light1_timer = 0 #start at 0
 light1_timing = 180 #set the time for light change
 
 #spawn cars
-vx = 2 #set x velocity
+vx = 3 #set x velocity
 vy = 2 #set y velocity
 car_width = road_width/4 #set car width
 car_length = road_width/2 #set car length
@@ -81,10 +81,14 @@ while True: #keeps the game running
     light1_timer += 1 #add 1 to the timer
     if light1_state == True: #if horizontal light is red
         car2.move()
-        if not (vert_x - car_length - vx * (light1_timing - light1_timer) < car1.x < vert_x - car_length): #if car1 is not close to the stop line
+        if not (vert_x - 3*car_length < car1.x < vert_x - car_length): #if car1 is not close to the stop line
             car1.move()
     else: #if vertical light is red
         car1.move()
-        if not (hor_y - car_length - vy * (light1_timing - light1_timer) < car2.y < hor_y - car_length): #if car2 is not close to the stop line
+        if not (hor_y - 3*car_length < car2.y < hor_y - car_length): #if car2 is not close to the stop line
             car2.move()
+    if car1.x > xsize:
+        car1.x = 0
+    if car2.y > ysize:
+        car2.y = 0
     pygame.display.flip() #flip canvas
