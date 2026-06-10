@@ -26,7 +26,7 @@ main_disp = pygame.display.set_mode((xsize, ysize)) #create display and set dime
 pygame.display.set_caption("the game") #set display name
 
 #set road dims and pos
-road_width = 50
+road_width = int(xsize / 10)
 vert_x = int(xsize/2 - road_width/2)
 hor_y = int(ysize/2 - road_width/2)
 
@@ -68,27 +68,35 @@ while True: #keeps the game running
     pygame.draw.rect(main_disp, (255,255,255), (vert_x, hor_y + road_width + car_length - int(car_length/5), road_width, int(car_length/5))) #stop line vertical 2
     pygame.draw.circle(main_disp, red if light1_state else green, (light1_hor_x, light1_hor_y), light1_size) #place light1_hor
     pygame.draw.circle(main_disp, green if light1_state else red, (light1_vert_x, light1_vert_y), light1_size) #place light1_vert
+
     if light1_timer == light1_timing: #when x seconds passes (x seconds * 60 frames)
         light1_timer = 0 #reset the timer
         light1_state = not light1_state #change the light's state
         print("The light value has changed")
-    pygame.draw.rect(main_disp, (50, 50, 150), (car1.x, car1.y, car_length, car_width)) #redraw car 1
-    pygame.draw.rect(main_disp, (50, 50, 150), (car2.x, car2.y, car_width, car_length)) #redraw car 2
+
+    pygame.draw.rect(main_disp, (50, 50, 150), (car1.x, car1.y, car_length, car_width)) #redraw car 1 at a new position
+    pygame.draw.rect(main_disp, (50, 50, 150), (car2.x, car2.y, car_width, car_length)) #redraw car 2 at a new position
+
     for event in pygame.event.get(): #check for events
         if event.type == pygame.QUIT: #exit when window is closed
-            pygame.quit()
+            pygame.quit() #quits
             exit() #runs exit
+
     light1_timer += 1 #add 1 to the timer
+
     if light1_state == True: #if horizontal light is red
-        car2.move()
-        if not (vert_x - 3*car_length < car1.x < vert_x - car_length): #if car1 is not close to the stop line
-            car1.move()
+        car2.move() #car2 keeps moving
+        if not (vert_x - int(2.5*car_length) < car1.x < vert_x - car_length): #if car1 is not close to the stop line
+            car1.move() #car1 keeps moving
+
     else: #if vertical light is red
-        car1.move()
-        if not (hor_y - 3*car_length < car2.y < hor_y - car_length): #if car2 is not close to the stop line
-            car2.move()
-    if car1.x > xsize:
-        car1.x = 0
-    if car2.y > ysize:
-        car2.y = 0
+        car1.move() #car1 keeps moving
+        if not (hor_y - int(2.5*car_length) < car2.y < hor_y - car_length): #if car2 is not close to the stop line
+            car2.move() #car2 keeps moving
+
+    if car1.x > xsize: #if car1 is off the screen
+        car1.x = 0 #respawn car1 at the start
+    if car2.y > ysize: #if car2 is off the screen
+        car2.y = 0 #respawn car2 at the start
+
     pygame.display.flip() #flip canvas
