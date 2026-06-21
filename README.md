@@ -1,4 +1,4 @@
-# Traffic Simulation Project by Nikolai Petrovyvh
+# Traffic Simulation Project by Nikolai Petrovych
 
 The goal of this project is to build a system of multiple road intersections, each with an independently operated traffic light. Then eventually, transform the project into an optimization problem by simulating different scenarios and finding the optimal traffic light setting for maximizing efficiency and minimizing collisions.
 
