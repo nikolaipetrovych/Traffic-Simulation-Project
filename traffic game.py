@@ -14,6 +14,10 @@ class Car: #car
         self.x += self.vx
         self.y += self.vy
 
+class Light: #traffic light
+    def __init__(self, state, ): #define traffic light state
+        self.state = state
+
 #set window
 xsize = 800
 ysize = 600
@@ -25,57 +29,145 @@ clock = pygame.time.Clock()
 main_disp = pygame.display.set_mode((xsize, ysize)) #create display and set dimensions
 pygame.display.set_caption("the game") #set display name
 
+#define helpful coordinates
+center_x = xsize/2
+center_y = ysize/2
+
 #set road dims and pos
 road_width = int(xsize / 10)
-vert_x = int(xsize/2 - road_width/2)
-hor_y = int(ysize/2 - road_width/2)
+vert_x = int(center_x - road_width/2)
+hor_y = int(center_y - road_width/2)
 
-#set traffic light colors
+#set stop lines dims and pos
+stop_line_length = road_width
+stop_line_width = int(road_width/10)
+stop_line_hor_1_x = center_x - road_width
+stop_line_hor_1_y = hor_y
+stop_line_hor_2_x = center_x + road_width - stop_line_width
+stop_line_hor_2_y = hor_y
+stop_line_ver_1_x = vert_x
+stop_line_ver_1_y = center_y - road_width
+stop_line_ver_2_x = vert_x
+stop_line_ver_2_y =  center_y + road_width - stop_line_width
+
+stop_line_hor_1 = (stop_line_hor_1_x, stop_line_hor_1_y, stop_line_width, stop_line_length)
+stop_line_hor_2 = (stop_line_hor_2_x, stop_line_hor_2_y, stop_line_width, stop_line_length)
+stop_line_ver_1 = (stop_line_ver_1_x, stop_line_ver_1_y, stop_line_length, stop_line_width)
+stop_line_ver_2 = (stop_line_ver_2_x, stop_line_ver_2_y, stop_line_length, stop_line_width)
+
+#set colors
+white = (255, 255, 255)
 green = (0, 255, 0)
+yellow = (255, 255, 0)
 red = (255, 0, 0)
+grey_road = (120, 120, 120)
+car_color = (50, 50, 150)
+grass_color = (50, 190, 50)
+
 
 #set traffic light dims and pos
 light1_size = 10
 light1_offset = 200
-light1_hor_x = int(xsize/2 + light1_offset)
-light1_hor_y = int(ysize/2)
-light1_vert_x = int(xsize/2)
-light1_vert_y = int(ysize/2 + light1_offset)
+light1_hor_x = int(center_x + light1_offset)
+light1_hor_y = int(center_y)
+light1_vert_x = int(center_x)
+light1_vert_y = int(center_y + light1_offset)
 
 
 #set initial traffic light values
-light1_state = False #True for red, False for green
+state = 1 #initial light state
+light1 = Light(state)
+light1_state = light1.state #1-6. see light states reference.md
 light1_timer = 0 #start at 0
-light1_timing = 180 #set the time for light change
+# light1_timing = 180 #set the time for light change
+green_time = 240
+yellow_time = 90
+allred_time = 60
+
+light1_hor_color = green
+light1_vert_color = red
 
 #spawn cars
-vx = 3 #set x velocity
+vx = 4 #set x velocity
 vy = 2 #set y velocity
-car_width = road_width/4 #set car width
-car_length = road_width/2 #set car length
-car1 = Car(0, int(hor_y + road_width/2 - car_width/2), vx, 0) #set pos and velecity of car 1 (horizontal)
-car2 = Car(int(vert_x + road_width/2 - car_width/2), 0, 0, vy) #set pos and velecity of car 2 (vertical)
+car_size = road_width/6 #set car radius
+car1 = Car(0, int(center_y), vx, 0) #set pos and velecity of car 1 (horizontal)
+car2 = Car(int(center_x), 0, 0, vy) #set pos and velecity of car 2 (vertical)
 
 #run game
+
 while True: #keeps the game running
     clock.tick(60) #set the frame rate at 60 fps
-    main_disp.fill((50, 190, 50)) #set bckrd color 
-    pygame.draw.rect(main_disp, (120, 120, 120), (0, hor_y, xsize, road_width)) #horizonal road
-    pygame.draw.rect(main_disp, (255,255,255), (vert_x - car_length, hor_y, int(car_length/5), road_width)) #stop line horizontal
-    pygame.draw.rect(main_disp, (255,255,255), (vert_x + road_width + car_length - int(car_length/5), hor_y, int(car_length/5), road_width)) #stop line horizontal 2
-    pygame.draw.rect(main_disp, (120, 120, 120), (vert_x, 0, road_width, ysize)) #vertical road
-    pygame.draw.rect(main_disp, (255,255,255), (vert_x, hor_y - car_length, road_width, int(car_length/5))) #stop line vertical
-    pygame.draw.rect(main_disp, (255,255,255), (vert_x, hor_y + road_width + car_length - int(car_length/5), road_width, int(car_length/5))) #stop line vertical 2
-    pygame.draw.circle(main_disp, red if light1_state else green, (light1_hor_x, light1_hor_y), light1_size) #place light1_hor
-    pygame.draw.circle(main_disp, green if light1_state else red, (light1_vert_x, light1_vert_y), light1_size) #place light1_vert
+    main_disp.fill(grass_color) #set bckrd color
 
-    if light1_timer == light1_timing: #when x seconds passes (x seconds * 60 frames)
+    pygame.draw.rect(main_disp, grey_road, (0, hor_y, xsize, road_width)) #horizonal road
+    pygame.draw.rect(main_disp, white, stop_line_hor_1) #stop line horizontal
+    pygame.draw.rect(main_disp, white, stop_line_hor_2) #stop line horizontal 2
+    pygame.draw.rect(main_disp, grey_road, (vert_x, 0, road_width, ysize)) #vertical road
+    pygame.draw.rect(main_disp, white, stop_line_ver_1) #stop line vertical
+    pygame.draw.rect(main_disp, white, stop_line_ver_2) #stop line vertical 2
+    
+    if light1_state == 1:
+        light1_timing = green_time
+        light1_hor_color = green
+        light1_vert_color = red
+        car1.move()
+        if not (stop_line_ver_1_y - 2*car_size < car2.y < stop_line_ver_1_y):
+            car2.move()
+
+    if light1_state == 2:
+        light1_timing = yellow_time
+        light1_hor_color = yellow
+        light1_vert_color = red
+        if light1_timer < yellow_time*0.67 or not stop_line_hor_1_x - 2*car_size< car1.x < stop_line_hor_1_x:
+            car1.move()
+        if not (stop_line_ver_1_y - 2*car_size < car2.y < stop_line_ver_1_y):
+            car2.move()
+
+    if light1_state in (3, 6):
+        light1_timing = allred_time
+        light1_hor_color = red
+        light1_vert_color = red
+        if not (stop_line_hor_1_x - 2*car_size < car1.x < stop_line_hor_1_x):
+            car1.move()
+        if not (stop_line_ver_1_y - 2*car_size < car2.y < stop_line_ver_1_y):
+            car2.move()
+
+    if light1_state == 4:
+        light1_timing = green_time
+        light1_hor_color = red
+        light1_vert_color = green
+        car2.move()
+        if not (stop_line_hor_1_x - 2*car_size < car1.x < stop_line_hor_1_x):
+            car1.move()
+
+    if light1_state == 5:
+        light1_timing = yellow_time
+        light1_hor_color = red
+        light1_vert_color = yellow
+        if light1_timer < yellow_time*0.67 or not stop_line_ver_1_y - 2*car_size < car2.y < stop_line_ver_1_y:
+            car2.move()
+        if not (stop_line_hor_1_x - 2*car_size < car1.x < stop_line_hor_1_x):
+            car1.move()
+
+    if light1_timer == light1_timing: #when the cycle passes
         light1_timer = 0 #reset the timer
-        light1_state = not light1_state #change the light's state
-        print("The light value has changed")
+        light1_state += 1 #change the light's state
 
-    pygame.draw.rect(main_disp, (50, 50, 150), (car1.x, car1.y, car_length, car_width)) #redraw car 1 at a new position
-    pygame.draw.rect(main_disp, (50, 50, 150), (car2.x, car2.y, car_width, car_length)) #redraw car 2 at a new position
+        # print("Light state has changed to:") #display light phase
+        # print(light1_state)
+
+    if light1_state == 7: #reset light phase cycle
+        light1_state = 1
+
+    # if light1_state in (2, 5): #if a light is yellow
+    #         print(light1_timer < yellow_time*0.67) #check if cars can still pass
+
+    pygame.draw.circle(main_disp, light1_hor_color, (light1_hor_x, light1_hor_y), light1_size) #place light1_hor
+    pygame.draw.circle(main_disp, light1_vert_color, (light1_vert_x, light1_vert_y), light1_size) #place light1_vert
+
+    pygame.draw.circle(main_disp, car_color, (car1.x, car1.y), car_size) #redraw car 1 at a new position
+    pygame.draw.circle(main_disp, car_color, (car2.x, car2.y), car_size) #redraw car 2 at a new position
 
     for event in pygame.event.get(): #check for events
         if event.type == pygame.QUIT: #exit when window is closed
@@ -84,19 +176,9 @@ while True: #keeps the game running
 
     light1_timer += 1 #add 1 to the timer
 
-    if light1_state == True: #if horizontal light is red
-        car2.move() #car2 keeps moving
-        if not (vert_x - int(2.5*car_length) < car1.x < vert_x - car_length): #if car1 is not close to the stop line
-            car1.move() #car1 keeps moving
-
-    else: #if vertical light is red
-        car1.move() #car1 keeps moving
-        if not (hor_y - int(2.5*car_length) < car2.y < hor_y - car_length): #if car2 is not close to the stop line
-            car2.move() #car2 keeps moving
-
     if car1.x > xsize: #if car1 is off the screen
         car1.x = 0 #respawn car1 at the start
     if car2.y > ysize: #if car2 is off the screen
         car2.y = 0 #respawn car2 at the start
 
-    pygame.display.flip() #flip canvas
+    pygame.display.flip() #flip canvas, restart the loop
