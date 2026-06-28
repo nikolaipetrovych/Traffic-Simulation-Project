@@ -4,15 +4,35 @@ pygame.init()
 #define classes
 class Car: #car
 
-    def __init__(self, x, y, vx, vy): #define variables for the class (x, y, vx, vy)
+    def __init__(self, x, y, vx, vy, ax, ay): #define variables for the class (x, y, vx, vy)
         self.x = x
         self.y = y
         self.vx = vx
         self.vy = vy
+        self.ax = ax
+        self.ay = ay
 
     def move(self): #define moving
         self.x += self.vx
         self.y += self.vy
+
+    # def stop(self): #braking/slowing function
+    #     self.vx -= self.ax
+    #     self.vy -= self.ay
+
+    def accel(self, value): #acceleration function (0 = decel, 1 = accel)
+        if value == 0: #decel
+            if (self.vx > 0 or self.vy > 0):
+                self.vx -= self.ax
+                self.vy -= self.ay
+        elif value == 1:
+            if (self.vx < vx or self.vy < vy):
+                self.vx += self.ax
+                self.vy += self.ay
+        else:
+            print("**Only values 0 or 1 are accepted for accel.value**")
+            pygame.quit() #quits
+            exit() #runs exit
 
 class Light: #traffic light
     def __init__(self, state, timer, green, yellow, allred): #define traffic light state
@@ -78,7 +98,7 @@ grass_color = (50, 190, 50)
 
 
 #set traffic light dims and pos
-light_size = 10
+light_size = road_width/12
 light_offset = 200
 light1_hor_x = int(center_x + light_offset)
 light1_hor_y = int(center_y)
@@ -97,11 +117,14 @@ light1_hor_color = green
 light1_vert_color = red
 
 #spawn cars
-vx = 6 #set x velocity
-vy = 2 #set y velocity
+vx = 10 #set x velocity
+vy = 15 #set y velocity
+a = 1 #set accel/decel value
+ax = a
+ay = a
 car_size = road_width/6 #set car radius
-car1 = Car(0, int(center_y), vx, 0) #set pos and velecity of car 1 (horizontal)
-car2 = Car(int(center_x), 0, 0, vy) #set pos and velecity of car 2 (vertical)
+car1 = Car(0, int(center_y), vx, 0, ax, 0) #set pos and velecity of car 1 (horizontal)
+car2 = Car(int(center_x), 0, 0, vy, 0, ay) #set pos and velecity of car 2 (vertical)
 
 #run game
 
@@ -116,7 +139,7 @@ while True: #keeps the game running
     pygame.draw.rect(main_disp, white, stop_line_ver_1) #stop line vertical
     pygame.draw.rect(main_disp, white, stop_line_ver_2) #stop line vertical 2
     
-    light1_timing = 0
+    # light1_timing = 0
 
     if light1.state == 1:
         light1_timing = light1.green
@@ -130,7 +153,7 @@ while True: #keeps the game running
         light1_timing = light1.yellow
         light1_hor_color = yellow
         light1_vert_color = red
-        if light1.timer < light1.yellow*0.67 or not stop_line_hor_1_x - 2*car_size< car1.x < stop_line_hor_1_x:
+        if light1.timer < light1.yellow*0.67 or not stop_line_hor_1_x - 2*car_size < car1.x < stop_line_hor_1_x:
             car1.move()
         if not (stop_line_ver_1_y - 2*car_size < car2.y < stop_line_ver_1_y):
             car2.move()
@@ -165,6 +188,23 @@ while True: #keeps the game running
         light1.timer = 0 #reset the timer
         light1.change() #change the light's state
 
+    if (light1.state in range(2,7)) and (stop_line_hor_1_x - 2*car_size  < car1.x + ((car1.vx)**2 / (2*car1.ax)) < stop_line_hor_1_x):
+        car1.accel(0)
+        
+    if (light1.state in range(1,4) or light1.state in range (5,7)) and (stop_line_ver_1_y - 2*car_size  < car2.y + ((car2.vy)**2 / (2*car2.ay)) < stop_line_ver_1_y):
+        car2.accel(0)
+        
+    if car1.vx < vx and light1.state == 1:
+        car1.accel(1)
+        
+    if car2.vy < vy and light1.state == 4:
+        car2.accel(1)
+
+    print(car1.vx, car2.vy)
+
+    # print(car1.vx)
+    # print(car2.vy)
+        
         # print("Light state has changed to:") #display light phase
         # print(light1_state)
 
