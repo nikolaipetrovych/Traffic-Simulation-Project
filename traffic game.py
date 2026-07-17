@@ -2,6 +2,7 @@ import pygame
 pygame.init()
 
 ## CLASSES
+
 class Car: #car
 
     def __init__(self, x, y, vx, vy, ax, ay): #define variables for the class (x, y, vx, vy)
@@ -56,7 +57,7 @@ class Light: #traffic light
             self.state = 1
 
     def count(self):
-        if self.state in range(1,4): # when color2 is red
+        if self.state in (1,2,3): # when color2 is red
             self.color2 = red
             if self.state == 1:
                 self.color1 = green
@@ -68,7 +69,7 @@ class Light: #traffic light
                 self.color1 = red
                 self.timer == self.allredtime
 
-        elif self.state in range(4,7): # when color1 is red
+        elif self.state in (4,5,6): # when color1 is red
             self.color2 = green
             if self.state == 4:
                 self.color2 = green
@@ -88,12 +89,22 @@ class Light: #traffic light
         if self.clock == self.timer: #when the cycle passes
             self.clock = 0 #reset the timer
             self.change() #change the light's state
-                
+
+
+## FUNCTIONS
+
+def coord(coordinate_x, coordinate_y):
+    return (int(coordinate_x / scale), int(coordinate_y / scale))
+
 ## VARIABLES
 
 #set window
 xsize = 800
 ysize = 600
+
+# set unit/pixel scale
+
+scale = 10 # pixels per meter
 
 #define a game clock (to set the frame rate later)
 gameclock = pygame.time.Clock()
