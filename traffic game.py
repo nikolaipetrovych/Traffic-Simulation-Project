@@ -42,13 +42,13 @@ class Car: #car
 class Light: #traffic light
     def __init__(self, state, greentime, yellowtime, allredtime): #define traffic light parameters
         self.state = state
-        self.timer = 1
+        # self.timer = 1
         self.clock = 0
         self.greentime = greentime
         self.yellowtime = yellowtime
         self.allredtime = allredtime
-        self.color1 = green
-        self.color1 = red
+        # self.color1 = green
+        # self.color2 = red
 
     def change(self):
         if self.state in range(1,6):
@@ -67,10 +67,10 @@ class Light: #traffic light
                 self.timer = self.yellowtime
             elif self.state == 3:
                 self.color1 = red
-                self.timer == self.allredtime
+                self.timer = self.allredtime
 
         elif self.state in (4,5,6): # when color1 is red
-            self.color2 = green
+            self.color1 = red
             if self.state == 4:
                 self.color2 = green
                 self.timer = self.greentime
@@ -78,7 +78,8 @@ class Light: #traffic light
                 self.color2 = yellow
                 self.timer = self.yellowtime
             elif self.state == 6:
-                self.timer == self.allredtime
+                self.color2 = red
+                self.timer = self.allredtime
 
         else:
             print("***INVALID CURRENT STATE VALUE***")
@@ -195,7 +196,7 @@ while True: #keeps the game running
             car2.move()
 
     if light1.state == 2:
-        if light1.timer < light1.yellowtime*0.67 or not stop_line_hor_1_x - 2*car_size < car1.x < stop_line_hor_1_x:
+        if light1.clock < light1.yellowtime*0.67 or not stop_line_hor_1_x - 2*car_size < car1.x < stop_line_hor_1_x:
             car1.move()
         if not (stop_line_ver_1_y - 2*car_size < car2.y < stop_line_ver_1_y):
             car2.move()
@@ -212,7 +213,7 @@ while True: #keeps the game running
             car1.move()
 
     if light1.state == 5:
-        if light1.timer < light1.yellowtime*0.67 or not stop_line_ver_1_y - 2*car_size < car2.y < stop_line_ver_1_y:
+        if light1.clock < light1.yellowtime*0.67 or not stop_line_ver_1_y - 2*car_size < car2.y < stop_line_ver_1_y:
             car2.move()
         if not (stop_line_hor_1_x - 2*car_size < car1.x < stop_line_hor_1_x):
             car1.move()
