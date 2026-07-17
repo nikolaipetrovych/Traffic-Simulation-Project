@@ -11,6 +11,9 @@ class Car: #car
         self.vy = vy
         self.ax = ax
         self.ay = ay
+        
+        self.vxmax = vx
+        self.vymax = vy
 
     def move(self): #define moving
         self.x += self.vx
@@ -26,7 +29,7 @@ class Car: #car
                 self.vx -= self.ax
                 self.vy -= self.ay
         elif value == 1:
-            if (self.vx < vx or self.vy < vy):
+            if (self.vx < self.vxmax or self.vy < self.vymax):
                 self.vx += self.ax
                 self.vy += self.ay
         else:
@@ -34,19 +37,105 @@ class Car: #car
             pygame.quit() #quits
             exit() #runs exit
 
+
 class Light: #traffic light
-    def __init__(self, state, timer, green, yellow, allred): #define traffic light state
+    def __init__(self, state, greentime, yellowtime, allredtime): #define traffic light parameters
         self.state = state
-        self.timer = timer
-        self.green = green
-        self.yellow = yellow
-        self.allred = allred
+        self.timer = 1
+        self.clock = 0
+        self.greentime = greentime
+        self.yellowtime = yellowtime
+        self.allredtime = allredtime
+        self.color1 = green
+        self.color1 = red
 
     def change(self):
-        if self.state == 6:
-            self.state = 1
-        else:
+        if self.state in range(1,7):
             self.state += 1
+        else:
+            self.state = 1
+
+    def count(self):
+        if self.state in range(1,4):
+            self.color2 = red
+            if self.state == 1:
+                self.color1 = green
+                self.timer = self.greentime
+            elif self.state == 2:
+                self.color1 = yellow
+                self.timer = self.yellowtime
+            elif self.state == 3:
+                self.color1 = red
+                self.timer == self.allredtime
+
+        elif self.state in range(4,7):
+            self.color2 = green
+            if self.state == 4:
+                self.color2 = green
+                self.timer = self.greentime
+            elif self.state == 5:
+                self.color2 = yellow
+                self.timer = self.yellowtime
+            elif self.state == 6:
+                self.timer == self.allredtime
+
+        else:
+            print("***INVALID CURRENT STATE VALUE***")
+            quit()
+
+        self.clock += 1
+
+        if self.clock == self.timer: #when the cycle passes
+            self.clock = 0 #reset the timer
+            self.change() #change the light's state
+                
+
+
+
+
+
+#       if light1.state == 1:
+#         light1_timing = light1.green
+#         light1_hor_color = green
+#         light1_vert_color = red
+#         car1.move()
+#         if not (stop_line_ver_1_y - 2*car_size < car2.y < stop_line_ver_1_y):
+#             car2.move()
+
+#     if light1.state == 2:
+#         light1_timing = light1.yellow
+#         light1_hor_color = yellow
+#         light1_vert_color = red
+#         if light1.timer < light1.yellow*0.67 or not stop_line_hor_1_x - 2*car_size < car1.x < stop_line_hor_1_x:
+#             car1.move()
+#         if not (stop_line_ver_1_y - 2*car_size < car2.y < stop_line_ver_1_y):
+#             car2.move()
+
+#     if light1.state in (3, 6):
+#         light1_timing = light1.allred
+#         light1_hor_color = red
+#         light1_vert_color = red
+#         if not (stop_line_hor_1_x - 2*car_size < car1.x < stop_line_hor_1_x):
+#             car1.move()
+#         if not (stop_line_ver_1_y - 2*car_size < car2.y < stop_line_ver_1_y):
+#             car2.move()
+
+#     if light1.state == 4:
+#         light1_timing = light1.green
+#         light1_hor_color = red
+#         light1_vert_color = green
+#         car2.move()
+#         if not (stop_line_hor_1_x - 2*car_size < car1.x < stop_line_hor_1_x):
+#             car1.move()
+
+#     if light1.state == 5:
+#         light1_timing = light1.yellow
+#         light1_hor_color = red
+#         light1_vert_color = yellow
+#         if light1.timer < light1.yellow*0.67 or not stop_line_ver_1_y - 2*car_size < car2.y < stop_line_ver_1_y:
+#             car2.move()
+#         if not (stop_line_hor_1_x - 2*car_size < car1.x < stop_line_hor_1_x):
+#             car1.move()
 
 
 
@@ -107,7 +196,7 @@ light1_vert_y = int(center_y + light_offset)
 
 
 #set initial traffic light values
-light1 = Light(1, 0, 120, 90, 60)
+light1 = Light(1, 0, 240, 90, 60)
 # light1_timing = 180 #set the time for light change
 # green_time = 240
 # yellow_time = 90
@@ -117,9 +206,9 @@ light1_hor_color = green
 light1_vert_color = red
 
 #spawn cars
-vx = 10 #set x velocity
-vy = 15 #set y velocity
-a = 1 #set accel/decel value
+vx = 3 #set x velocity
+vy = 4 #set y velocity
+a = 0.1 #set accel/decel value
 ax = a
 ay = a
 car_size = road_width/6 #set car radius
@@ -200,7 +289,7 @@ while True: #keeps the game running
     if car2.vy < vy and light1.state == 4:
         car2.accel(1)
 
-    print(car1.vx, car2.vy)
+    #print(car1.vx, car2.vy) #check speeds in real time
 
     # print(car1.vx)
     # print(car2.vy)
