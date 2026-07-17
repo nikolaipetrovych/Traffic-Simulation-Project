@@ -56,7 +56,7 @@ class Light: #traffic light
             self.state = 1
 
     def count(self):
-        if self.state in range(1,4):
+        if self.state in range(1,4): # when color2 is red
             self.color2 = red
             if self.state == 1:
                 self.color1 = green
@@ -68,7 +68,7 @@ class Light: #traffic light
                 self.color1 = red
                 self.timer == self.allredtime
 
-        elif self.state in range(4,7):
+        elif self.state in range(4,7): # when color1 is red
             self.color2 = green
             if self.state == 4:
                 self.color2 = green
@@ -84,7 +84,6 @@ class Light: #traffic light
             quit()
 
         self.clock += 1 # add to clock after checking states
-        print(self.clock, self.timer, self.state)
 
         if self.clock == self.timer: #when the cycle passes
             self.clock = 0 #reset the timer
@@ -170,14 +169,14 @@ while True: #keeps the game running
     gameclock.tick(60) #set the frame rate at 60 fps
     main_disp.fill(grass_color) #set bckrd color
 
-    pygame.draw.rect(main_disp, grey_road, (0, hor_y, xsize, road_width)) #horizonal road
-    pygame.draw.rect(main_disp, white, stop_line_hor_1) #stop line horizontal
-    pygame.draw.rect(main_disp, white, stop_line_hor_2) #stop line horizontal 2
-    pygame.draw.rect(main_disp, grey_road, (vert_x, 0, road_width, ysize)) #vertical road
-    pygame.draw.rect(main_disp, white, stop_line_ver_1) #stop line vertical
-    pygame.draw.rect(main_disp, white, stop_line_ver_2) #stop line vertical 2
+    pygame.draw.rect(main_disp, grey_road, (0, hor_y, xsize, road_width))   #horizonal road
+    pygame.draw.rect(main_disp, white, stop_line_hor_1)                     #stop line horizontal
+    pygame.draw.rect(main_disp, white, stop_line_hor_2)                     #stop line horizontal 2
+    pygame.draw.rect(main_disp, grey_road, (vert_x, 0, road_width, ysize))  #vertical road
+    pygame.draw.rect(main_disp, white, stop_line_ver_1)                     #stop line vertical
+    pygame.draw.rect(main_disp, white, stop_line_ver_2)                     #stop line vertical 2
 
-    light1.count()
+    light1.count() # go through the count function (advance by 1 frame) for light1
 
     if light1.state == 1:
         car1.move()
