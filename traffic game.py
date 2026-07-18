@@ -16,23 +16,30 @@ class Car: #car
         self.vxmax = vx
         self.vymax = vy
 
+    def draw(self):
+        pygame.draw.circle(main_disp, car_color, (self.x, self.y), car_size) #redraw car at a new position
+        if self.x > xsize: #if car is off the screen horizontally
+            self.x = 0 #respawn car at the start
+        if self.y > ysize: #if car is off the screen vertically
+            self.y = 0 #respawn car at the start
+
     def move(self): #define moving
         self.x += self.vx
         self.y += self.vy
-
-    # def stop(self): #braking/slowing function
-    #     self.vx -= self.ax
-    #     self.vy -= self.ay
 
     def accel(self, value): #acceleration function (0 = decel, 1 = accel)
         if value == 0: #decel
             if (self.vx > 0 or self.vy > 0):
                 self.vx -= self.ax
                 self.vy -= self.ay
-        elif value == 1:
+                if self.vx < 0: self.vx = 0
+                if self.vy < 0: self.vy = 0
+        elif value == 1: # accel
             if (self.vx < self.vxmax or self.vy < self.vymax):
                 self.vx += self.ax
                 self.vy += self.ay
+                if self.vx > self.vxmax: self.vx = self.vxmax
+                if self.vy > self.vymax: self.vy = self.vymax
         else:
             print("**Only values 0 or 1 are accepted for accel.value**")
             pygame.quit() #quits
@@ -42,13 +49,11 @@ class Car: #car
 class Light: #traffic light
     def __init__(self, state, greentime, yellowtime, allredtime): #define traffic light parameters
         self.state = state
-        # self.timer = 1
-        self.clock = 0
         self.greentime = greentime
         self.yellowtime = yellowtime
         self.allredtime = allredtime
-        # self.color1 = green
-        # self.color2 = red
+
+        self.clock = 0
 
     def change(self):
         if self.state in range(1,6):
@@ -107,8 +112,9 @@ ysize = 600
 
 scale = 10 # pixels per meter
 
-#define a game clock (to set the frame rate later)
+#define a game clock and framerate
 gameclock = pygame.time.Clock()
+framerate = 60
 
 #create window
 main_disp = pygame.display.set_mode((xsize, ysize)) #create display and set dimensions
@@ -169,8 +175,7 @@ light1_vert_color = red
 vx = 3 #set x velocity
 vy = 4 #set y velocity
 a = 0.1 #set accel/decel value
-ax = a
-ay = a
+ax = ay = a
 car_size = road_width/6 #set car radius
 car1 = Car(0, int(center_y), vx, 0, ax, 0) #set pos and velecity of car 1 (horizontal)
 car2 = Car(int(center_x), 0, 0, vy, 0, ay) #set pos and velecity of car 2 (vertical)
@@ -178,7 +183,7 @@ car2 = Car(int(center_x), 0, 0, vy, 0, ay) #set pos and velecity of car 2 (verti
 ## RUN PYGAME SIMULATION
 
 while True: #keeps the game running
-    gameclock.tick(60) #set the frame rate at 60 fps
+    gameclock.tick(framerate) #set the frame rate at 60 fps
     main_disp.fill(grass_color) #set bckrd color
 
     pygame.draw.rect(main_disp, grey_road, (0, hor_y, xsize, road_width))   #horizonal road
@@ -224,22 +229,17 @@ while True: #keeps the game running
     if (light1.state in range(1,4) or light1.state in range (5,7)) and (stop_line_ver_1_y - 2*car_size  < car2.y + ((car2.vy)**2 / (2*car2.ay)) < stop_line_ver_1_y):
         car2.accel(0)
         
-    if car1.vx < vx and light1.state == 1:
+    if car1.vx < car1.vxmax and light1.state == 1:
         car1.accel(1)
         
-    if car2.vy < vy and light1.state == 4:
+    if car2.vy < car2.vymax and light1.state == 4:
         car2.accel(1)
 
     pygame.draw.circle(main_disp, light1.color1, (light1_hor_x, light1_hor_y), light_size) #place light1_hor
     pygame.draw.circle(main_disp, light1.color2, (light1_vert_x, light1_vert_y), light_size) #place light1_vert
 
-    pygame.draw.circle(main_disp, car_color, (car1.x, car1.y), car_size) #redraw car 1 at a new position
-    pygame.draw.circle(main_disp, car_color, (car2.x, car2.y), car_size) #redraw car 2 at a new position
-
-    if car1.x > xsize: #if car1 is off the screen
-        car1.x = 0 #respawn car1 at the start
-    if car2.y > ysize: #if car2 is off the screen
-        car2.y = 0 #respawn car2 at the start
+    car1.draw() # place car at its position
+    car2.draw()
 
     for event in pygame.event.get(): #check for events
         if event.type == pygame.QUIT: #exit when window is closed
