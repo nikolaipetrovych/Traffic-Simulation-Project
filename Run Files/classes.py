@@ -18,14 +18,15 @@ class Car:
 
     def draw(self):
         pygame.draw.circle(cfg.main_disp, cfg.car_color, (self.x, self.y), cfg.car_size)  # redraw car at a new position
-        if self.x > cfg.xsize:  # if car is off the screen horizontally
-            self.x = 0  # respawn car at the start
-        if self.y > cfg.ysize:  # if car is off the screen vertically
-            self.y = 0  # respawn car at the start
 
     def move(self):  # define moving
         self.x += self.vx
         self.y += self.vy
+
+        if self.x > cfg.xsize:  # if car is off the screen horizontally
+            self.x = 0  # respawn car at the start
+        if self.y > cfg.ysize:  # if car is off the screen vertically
+            self.y = 0  # respawn car at the start
 
     def accel(self, value):  # acceleration function (0 = decel, 1 = accel)
         if value == 0:  # decel
@@ -119,5 +120,5 @@ class Light:
             self.change()  # change the light's state
 
 
-# def coord(coordinate_x, coordinate_y):
-#     return (int(coordinate_x / cfg.scale), int(coordinate_y / cfg.scale))
+def coord(coordinate_x, coordinate_y):  # coordinate conversion, will implement later
+     return (int(coordinate_x / cfg.scale), int(coordinate_y / cfg.scale))
