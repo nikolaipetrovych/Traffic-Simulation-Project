@@ -1,9 +1,11 @@
+import sys
+
 import config as cfg
 import pygame
 
 
 class Car:
-    def __init__(self, x, y, vx, vy, ax, ay): #define variables for the class (x, y, vx, vy)
+    def __init__(self, x, y, vx, vy, ax, ay):  # define variables for the class (x, y, vx, vy)
         self.x = x
         self.y = y
         self.vx = vx
@@ -15,18 +17,18 @@ class Car:
         self.vymax = vy
 
     def draw(self):
-        pygame.draw.circle(cfg.main_disp, cfg.car_color, (self.x, self.y), cfg.car_size) #redraw car at a new position
-        if self.x > cfg.xsize: #if car is off the screen horizontally
-            self.x = 0 #respawn car at the start
-        if self.y > cfg.ysize: #if car is off the screen vertically
-            self.y = 0 #respawn car at the start
+        pygame.draw.circle(cfg.main_disp, cfg.car_color, (self.x, self.y), cfg.car_size)  # redraw car at a new position
+        if self.x > cfg.xsize:  # if car is off the screen horizontally
+            self.x = 0  # respawn car at the start
+        if self.y > cfg.ysize:  # if car is off the screen vertically
+            self.y = 0  # respawn car at the start
 
-    def move(self): #define moving
+    def move(self):  # define moving
         self.x += self.vx
         self.y += self.vy
 
-    def accel(self, value): #acceleration function (0 = decel, 1 = accel)
-        if value == 0: #decel
+    def accel(self, value):  # acceleration function (0 = decel, 1 = accel)
+        if value == 0:  # decel
             if (self.vx > 0 or self.vy > 0):
                 self.vx -= self.ax
                 self.vy -= self.ay
@@ -34,7 +36,7 @@ class Car:
                     self.vx = 0
                 if self.vy < 0:
                     self.vy = 0
-        elif value == 1: # accel
+        elif value == 1:  # accel
             if (self.vx < self.vxmax or self.vy < self.vymax):
                 self.vx += self.ax
                 self.vy += self.ay
@@ -44,8 +46,8 @@ class Car:
                     self.vy = self.vymax
         else:
             print("**Only values 0 or 1 are accepted for accel.value**")
-            pygame.quit() #quits
-            exit() #runs exit
+            pygame.quit()  # quits
+            sys.exit()  # runs exit
 
     def canmove(self, dir):
         if dir == 'x':
@@ -54,7 +56,7 @@ class Car:
             return not (cfg.stop_line_ver_1_y - 2*cfg.car_size < self.y < cfg.stop_line_ver_1_y)
 
         print("dir has to be a string of x or y.")
-        quit()
+        sys.exit()
 
     def shouldbrake(self, dir):
         if dir == 'x':
@@ -63,11 +65,11 @@ class Car:
             return (cfg.stop_line_ver_1_y - 2*cfg.car_size  < self.y + ((self.vy)**2 / (2*self.ay)) < cfg.stop_line_ver_1_y)
 
         print("dir has to be a string of x or y.")
-        quit()
+        sys.exit()
 
 
 class Light:
-    def __init__(self, state, greentime, yellowtime, allredtime): #define traffic light parameters
+    def __init__(self, state, greentime, yellowtime, allredtime):  # define traffic light parameters
         self.state = state
         self.greentime = greentime
         self.yellowtime = yellowtime
@@ -82,7 +84,7 @@ class Light:
             self.state = 1
 
     def count(self):
-        if self.state in (1,2,3): # when color2 is red
+        if self.state in (1,2,3):  # when color2 is red
             self.color2 = cfg.red
             if self.state == 1:
                 self.color1 = cfg.green
@@ -94,7 +96,7 @@ class Light:
                 self.color1 = cfg.red
                 self.timer = self.allredtime
 
-        elif self.state in (4,5,6): # when color1 is red
+        elif self.state in (4,5,6):  # when color1 is red
             self.color1 = cfg.red
             if self.state == 4:
                 self.color2 = cfg.green
@@ -108,14 +110,14 @@ class Light:
 
         else:
             print("***INVALID CURRENT STATE VALUE***")
-            quit()
+            sys.exit()
 
-        self.clock += 1 # add to clock after checking states
+        self.clock += 1  # add to clock after checking states
 
-        if self.clock == self.timer: #when the cycle passes
-            self.clock = 0 #reset the timer
-            self.change() #change the light's state
+        if self.clock == self.timer:  # when the cycle passes
+            self.clock = 0  # reset the timer
+            self.change()  # change the light's state
 
 
-def coord(coordinate_x, coordinate_y):
-    return (int(coordinate_x / cfg.scale), int(coordinate_y / cfg.scale))
+# def coord(coordinate_x, coordinate_y):
+#     return (int(coordinate_x / cfg.scale), int(coordinate_y / cfg.scale))
