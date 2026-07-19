@@ -1,10 +1,8 @@
-import pygame
 import config as cfg
+import pygame
 
-## CLASSES
 
-class Car: #car
-
+class Car:
     def __init__(self, x, y, vx, vy, ax, ay): #define variables for the class (x, y, vx, vy)
         self.x = x
         self.y = y
@@ -12,7 +10,7 @@ class Car: #car
         self.vy = vy
         self.ax = ax
         self.ay = ay
-        
+
         self.vxmax = vx
         self.vymax = vy
 
@@ -32,21 +30,43 @@ class Car: #car
             if (self.vx > 0 or self.vy > 0):
                 self.vx -= self.ax
                 self.vy -= self.ay
-                if self.vx < 0: self.vx = 0
-                if self.vy < 0: self.vy = 0
+                if self.vx < 0:
+                    self.vx = 0
+                if self.vy < 0:
+                    self.vy = 0
         elif value == 1: # accel
             if (self.vx < self.vxmax or self.vy < self.vymax):
                 self.vx += self.ax
                 self.vy += self.ay
-                if self.vx > self.vxmax: self.vx = self.vxmax
-                if self.vy > self.vymax: self.vy = self.vymax
+                if self.vx > self.vxmax:
+                    self.vx = self.vxmax
+                if self.vy > self.vymax:
+                    self.vy = self.vymax
         else:
             print("**Only values 0 or 1 are accepted for accel.value**")
             pygame.quit() #quits
             exit() #runs exit
 
+    def canmove(self, dir):
+        if dir == 'x':
+            return not (cfg.stop_line_hor_1_x - 2*cfg.car_size < self.x < cfg.stop_line_hor_1_x)
+        if dir == 'y':
+            return not (cfg.stop_line_ver_1_y - 2*cfg.car_size < self.y < cfg.stop_line_ver_1_y)
 
-class Light: #traffic light
+        print("dir has to be a string of x or y.")
+        quit()
+
+    def shouldbrake(self, dir):
+        if dir == 'x':
+            return (cfg.stop_line_hor_1_x - 2*cfg.car_size  < self.x + ((self.vx)**2 / (2*self.ax)) < cfg.stop_line_hor_1_x)
+        if dir == 'y':
+            return (cfg.stop_line_ver_1_y - 2*cfg.car_size  < self.y + ((self.vy)**2 / (2*self.ay)) < cfg.stop_line_ver_1_y)
+
+        print("dir has to be a string of x or y.")
+        quit()
+
+
+class Light:
     def __init__(self, state, greentime, yellowtime, allredtime): #define traffic light parameters
         self.state = state
         self.greentime = greentime
@@ -96,8 +116,6 @@ class Light: #traffic light
             self.clock = 0 #reset the timer
             self.change() #change the light's state
 
-
-## FUNCTIONS
 
 def coord(coordinate_x, coordinate_y):
     return (int(coordinate_x / cfg.scale), int(coordinate_y / cfg.scale))

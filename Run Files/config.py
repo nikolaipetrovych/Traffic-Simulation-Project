@@ -1,15 +1,12 @@
 import pygame
+
 pygame.init()
-
-
-## DEFINE VARIABLES
 
 #set window
 xsize = 800
 ysize = 600
 
 # set unit/pixel scale
-
 scale = 10 # pixels per meter
 
 #define a game clock and framerate
